@@ -1,0 +1,10 @@
+* onboarding
+** Things we need
+ - Password (for credentials file)
+ - AWS key and secrey key
+ - Bucket
+ - Store creds (encrypted) in ~/.s3cryptview/<bucket-name>
+** Flow
+* sync
+* viewing
+* tagging
