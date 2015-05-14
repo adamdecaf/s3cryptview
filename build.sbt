@@ -1,4 +1,4 @@
-name := "s3guiplay"
+name := "s3cryptview"
 
 organization := "org.decaf"
 

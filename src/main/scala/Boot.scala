@@ -3,21 +3,8 @@ import scala.swing._
 import scala.swing.event._
 import org.decaf.s3cryptview.fs._
 
-// import swing._
-// object HelloWorld extends SimpleSwingApplication {
-//   def top = new MainFrame {
-//     title = "Hello, World!"
-//     contents = new Button {
-//       text = "Click Me!"
-//     }
-//   }
-// }
-
 object Boot extends SimpleSwingApplication {
   println("s3cryptview is starting")
-
-  // def resourceFromClassloader(path: String): java.net.URL
-  // def resourceFromUserDirectory(path: String): java.io.File
 
   def top = new MainFrame {
     title = "s3cryptview"
