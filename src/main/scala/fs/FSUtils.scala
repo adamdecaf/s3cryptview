@@ -1,5 +1,5 @@
 package org.decaf.s3cryptview.fs
-import java.io.{File, IOException}
+import java.io.{File, FileWriter, IOException}
 
 object FSUtils {
   final def directoryHasFilesUnder(path: String): Boolean =
@@ -23,6 +23,17 @@ object FSUtils {
         }
       }
       builder.result
+    }
+
+  final def overwriteFile(path: String)(contents: Array[Char]): Unit =
+    catchIOExceptions() {
+      val file = new File(path)
+      val writer = new FileWriter(file)
+      try {
+        writer.write(contents)
+      } finally {
+        writer.close
+      }
     }
 
   private[this] def catchIOExceptions[T](empty: T)(body: => T): T =
