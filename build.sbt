@@ -9,7 +9,7 @@ scalacOptions ++= Seq("-deprecation", "-feature")
 resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies ++= Seq(
-  "com.amazonaws" % "aws-java-sdk-s3" % "1.9.25",
+  "com.amazonaws" % "aws-java-sdk-s3" % "1.9.35",
   "org.scala-lang.modules" %% "scala-swing" % "2.0.0-SNAPSHOT"
 )
 

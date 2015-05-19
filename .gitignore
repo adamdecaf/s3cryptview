@@ -19,3 +19,6 @@ project/plugins/project/
 # Project Specific
 /build/*.jar
 /build/*/.vagrant.d/
+
+# Ignore MAC files
+.DS_Store

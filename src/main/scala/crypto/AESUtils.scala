@@ -1,4 +1,5 @@
 package org.decaf.s3cryptview.crypto
+import java.util.Arrays
 import javax.crypto.{Cipher, SecretKeyFactory}
 import javax.crypto.spec.{IvParameterSpec, PBEKeySpec, SecretKeySpec}
 
@@ -18,7 +19,12 @@ object AESUtils {
     val iv = params.getParameterSpec(classOf[IvParameterSpec]).getIV()
     val ciphertext = cipher.doFinal(contents)
 
-    AESEncryptionResult(iv, ciphertext)
+    AESEncryptionResult(iv, iv ++: ciphertext)
+  }
+
+  final def decrypt(contents: Array[Byte], password: String, salt: Array[Byte]): Option[Array[Byte]] = {
+    val both = contents.splitAt(16)
+    decrypt(both._2, password, both._1, salt)
   }
 
   final def decrypt(contents: Array[Byte], password: String, iv: Array[Byte], salt: Array[Byte]): Option[Array[Byte]] = {
@@ -31,6 +37,14 @@ object AESUtils {
     val params = cipher.getParameters()
 
     cipher.init(Cipher.DECRYPT_MODE, secret, new IvParameterSpec(iv))
-    Some(cipher.doFinal(contents))
+
+    val withoutMaybeIV =
+      if (Arrays.equals(contents.take(16), iv)) {
+        contents.drop(16)
+      } else {
+        contents
+      }
+
+    Some(cipher.doFinal(withoutMaybeIV))
   }
 }

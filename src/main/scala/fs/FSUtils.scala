@@ -2,27 +2,35 @@ package org.decaf.s3cryptview.fs
 import java.io.{File, FileWriter, IOException}
 
 object FSUtils {
-  final def directoryHasFilesUnder(path: String): Boolean =
+  final def makeDirectoryIfMissing(path: String): Boolean =
     catchIOExceptions(false) {
       val folder = new File(path)
-      lazy val files = folder.listFiles().iterator.take(1)
-      folder.exists && files.hasNext
+      folder.mkdirs()
+      true
     }
 
-  final def getFilesDirectlyUnderDirectory(path: String): List[File] =
+  final def directoryHasFilesUnder(path: String, ignorableFileNames: List[String] = List.empty): Boolean =
+    catchIOExceptions(false) {
+      val folder = new File(path)
+      folder.exists && {
+        (for {
+           file <- folder.listFiles().toList
+           if nonIgnorableFile(file.getName(), ignorableFileNames)
+         } yield file).nonEmpty
+      }
+}
+
+  final def getFilesDirectlyUnderDirectory(path: String, ignorableFileNames: List[String] = List.empty): List[File] =
     catchIOExceptions(List.empty[File]) {
       val folder = new File(path)
-      val builder = List.newBuilder[File]
       if (folder.exists) {
-        val files = folder.listFiles().iterator
-        while(files.hasNext) {
-          val file = files.next()
-          if (file.exists) {
-            builder += file
-          }
-        }
+        for {
+          file <- folder.listFiles().toList
+          if nonIgnorableFile(file.getName(), ignorableFileNames)
+        } yield file
+      } else {
+        List.empty
       }
-      builder.result
     }
 
   final def overwriteFile(path: String)(contents: Array[Char]): Unit =
@@ -36,10 +44,15 @@ object FSUtils {
       }
     }
 
+  private[this] def nonIgnorableFile(filename: String, ignorableFileNames: List[String]) =
+    !ignorableFileNames.exists(ignorable => filename.endsWith(s"${ignorable}"))
+
   private[this] def catchIOExceptions[T](empty: T)(body: => T): T =
     try {
       body
     } catch {
-      case err: IOException => empty
+      case err: IOException =>
+        err.printStackTrace
+        empty
     }
 }
